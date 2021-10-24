@@ -69,13 +69,13 @@ export default {
     },
     member: {
       get() {
-        console.log("get member");
-        console.log(this.inmember);
+        // console.log("get member");
+        // console.log(this.inmember);
         return this.inmember;
       },
       set(val) {
-        console.log("set member");
-        console.log(val);
+        // console.log("set member");
+        // console.log(val);
         this.inmember = val;
       }
     }
@@ -91,8 +91,8 @@ export default {
       this.$emit('card', val);
     },
     set(val) {
-      console.log("set func");
-      console.log(val);
+      // console.log("set func");
+      // console.log(val);
       this.member = val;
     }
   }

@@ -16,7 +16,8 @@
 import Greet from './components/Greet.vue'
 import Poker from './components/Poker.vue'
 
-var websocket = new WebSocket('ws://localhost:3000');
+// var websocket = new WebSocket('ws://localhost:3000');
+var websocket = new WebSocket('wss://cnx3toa5nd.execute-api.us-east-2.amazonaws.com/production/?room=abc');
 
 export default {
   name: 'App',
@@ -92,7 +93,7 @@ export default {
 
     // websocketをオープンした時
     websocket.onopen = function() {
-      console.log("### websocket.onopen()");
+      // console.log("### websocket.onopen()");
       self.connected = true;
       if (self.$route.query.room) {
         let send_data = {
@@ -101,15 +102,24 @@ export default {
         };
         websocket.send(JSON.stringify(send_data));
       }
+      this.timeobj = setInterval(function() {
+        console.log("timeobj!!!!");
+        let send_data = {
+          com: 'ping',
+        };
+        websocket.send(JSON.stringify(send_data));
+      }, 1000*60*5);
     };
 
     // websocketでメッセージを受信した時
-    websocket.onmessage = function(event,) {
+    websocket.onmessage = function(event) {
       // console.log("### websocket.onmessage()");
+      // console.log(event.data);
 
       // 戻り値チェック
-      if (event && event.data) {
+      if (event && event.data && event.data !== "") {
         // 受信したメッセージを表示する
+        // console.log("### in check!! "+event.data.length);
         let obj = JSON.parse(event.data);
         let setf = true;
         switch (obj.com) {
@@ -120,13 +130,13 @@ export default {
             self.opened = false;
             break;
           case 'room-error':
-            console.log("!!!!!!!!!!!!!!!room-error");
+            // console.log("!!!!!!!!!!!!!!!room-error");
             self.jointype = false;
             setf = false;
             self.$router.push('/')
             break;
           case 'room-success':
-            console.log("!!!!!!!!!!!!!!!room-success");
+            // console.log("!!!!!!!!!!!!!!!room-success");
             self.doing_greet = false;
             setf = false;
             self.room_url = location.origin+"/?room="+obj.room;
@@ -140,9 +150,10 @@ export default {
 
     // websocketをクローズした時
     websocket.onclose = function() {
-      console.log("### websocket.onclose()");
+      // console.log("### websocket.onclose()");
       self.doing_greet = true;
       self.connected = false;
+      clearInterval(this.timeobj);
     };
   }
 }

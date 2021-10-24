@@ -22,7 +22,7 @@ export default {
   computed: {
     yname: {
       get () {
-        console.log("query>"+this.$route.query.room);
+        // console.log("query>"+this.$route.query.room);
         // this.$route.query.room
         return this.inyname;
       },
